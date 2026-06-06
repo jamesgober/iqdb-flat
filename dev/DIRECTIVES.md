@@ -73,7 +73,7 @@ Tier 1 covers the entire common case in a handful of calls, with no builder and 
 
 ## 8. Project-specific invariants
 
-Stack: Rust edition 2024, MSRV 1.85. Errors via `error-forge`. Tests via `cargo test` + `criterion` + `loom` + `proptest`.
+Stack: Rust edition 2024, MSRV 1.87. Errors via `error-forge`. Tests via `cargo test` + `criterion` + `loom` + `proptest`.
 
 - Flat results are the correctness oracle: approximate indexes are validated against them via recall@k.
 - If flat search cannot fit the `Index` trait cleanly, the trait is wrong and gets fixed, not worked around.
