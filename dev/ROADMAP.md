@@ -57,10 +57,43 @@ and it is not a feature-surface change.
 
 ---
 
-## v0.5.0 -- large-scan correctness + API freeze
+## v0.5.0 -- large-scan correctness + API freeze (DONE)
 
 Exit criteria:
-- [ ] Public API frozen (recorded here). `cargo audit` + `cargo deny` clean.
+- [x] Public API frozen (recorded here). `cargo audit` + `cargo deny` clean.
+
+**Large-scan correctness.** `tests/large_scan.rs` asserts flat's top-`k` is
+bit-for-bit identical to an independent naive full scan at N = 20_000 (exact, via
+integer coordinates that avoid `f32` roundoff), and that a full `k == N` scan
+returns every id exactly once in best-first order — pinning the oracle guarantee
+at scale, not just in the small unit tests.
+
+### Frozen public API (1.x compatibility surface)
+
+Recorded here per the directive that the public surface is frozen at the API
+freeze. Everything below is committed; only **additive, non-breaking** changes
+are made through 1.x. `iqdb_types::IqdbError` (the error type all methods return)
+is `#[non_exhaustive]`, so new variants are not breaking.
+
+- **`iqdb_flat::VERSION: &str`** — compile-time SemVer string.
+- **`iqdb_flat::Hit`** — re-export of `iqdb_types::Hit` (the search result type).
+- **`FlatConfig`** — unit config; `derive(Debug, Default, Clone, PartialEq, Eq)`.
+- **`FlatIndex`** — `derive(Debug)`; `Send + Sync`. Inherent methods:
+  - `FlatIndex::new_unconfigured(dim, metric) -> Result<Self>`
+  - `dim(&self) -> usize`, `metric(&self) -> DistanceMetric`,
+    `len(&self) -> usize`, `is_empty(&self) -> bool`
+- **`impl iqdb_index::Index for FlatIndex`** — `type Config = FlatConfig`;
+  `new(dim, metric, config) -> Result<Self>`.
+- **`impl iqdb_index::IndexCore for FlatIndex`** — `insert`, `insert_batch`*,
+  `delete`, `search`, `search_batch`*, `len`, `is_empty`, `dim`, `metric`,
+  `flush`, `stats` (* = trait default, not overridden).
+- **Feature `parallel`** — internal-only; does not change the API surface.
+
+Behavioural contracts frozen with the surface: `Hit.distance` is
+smaller-is-nearer for all five metrics (`DotProduct` negated); equal-distance
+ties break by insertion order via monotonic per-row sequence stamps; no method
+panics on any input (`NaN`/`±∞` sort deterministically via `f32::total_cmp`);
+zero `unsafe`.
 
 ---
 

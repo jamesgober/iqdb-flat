@@ -29,7 +29,7 @@
         <strong>MSRV is 1.87+</strong> (Rust 2024 edition). Exact, correct, and the recall ground truth. Fast for small data.
     </p>
     <blockquote>
-        <strong>Status: pre-1.0, feature-complete.</strong> The full index — exact search, top-<code>k</code>, the <code>Index</code> trait, optional parallel scans, and metadata pre-filtering — is implemented and tested. The public API is being finalised across the 0.x series and frozen at <code>1.0.0</code>. See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
+        <strong>Status: pre-1.0, API frozen.</strong> The full index — exact search, top-<code>k</code>, the <code>Index</code> trait, optional parallel scans, and metadata pre-filtering — is implemented and tested, and the public API is committed as of <code>v0.5.0</code> (only additive, non-breaking changes through 1.x). See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
     </blockquote>
 </div>
 
@@ -50,10 +50,10 @@
 
 ```toml
 [dependencies]
-iqdb-flat = "0.4"
+iqdb-flat = "0.5"
 
 # Optional rayon-backed parallel scan for large in-memory corpora:
-# iqdb-flat = { version = "0.4", features = ["parallel"] }
+# iqdb-flat = { version = "0.5", features = ["parallel"] }
 ```
 
 <br>
@@ -119,11 +119,14 @@ The complete surface — every method, parameter, error, and more examples — i
 
 ## Status
 
-`v0.4.0` is **feature-complete**: exact search, top-`k`, the full `Index` /
-`IndexCore` trait implementation, the optional `parallel` scan, and metadata
-pre-filtering all ship and are covered by unit, property, differential, and
-scale tests. Remaining work to 1.0 is API finalisation, polish, and final
-benchmarks per the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>.
+`v0.5.0` is **feature-complete with the public API frozen**: exact search,
+top-`k`, the full `Index` / `IndexCore` trait implementation, the optional
+`parallel` scan, and metadata pre-filtering all ship and are covered by unit,
+property, differential, and scale tests — including a bit-for-bit large-scan
+oracle check at N = 20,000. The committed surface is recorded in the
+<a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>; only additive, non-breaking
+changes are made through 1.x. Remaining work to 1.0 is integration against real
+consumers, polish, and final benchmarks.
 
 <hr>
 <br>
@@ -141,9 +144,9 @@ It is unblocked once `iqdb-index` exists; no external dependency.
 
 <br>
 
-## Contributing
+## Standards
 
-See <a href="./dev/DIRECTIVES.md"><code>dev/DIRECTIVES.md</code></a> for engineering standards and the definition of done. Before a PR: `cargo fmt --all`, `cargo clippy --all-targets --all-features -- -D warnings`, and `cargo test --all-features` must be clean.
+Built to the iQDB Rust standard. See <a href="./REPS.md"><code>REPS.md</code></a> (Rust Efficiency &amp; Performance Standards) and <a href="./dev/DIRECTIVES.md"><code>dev/DIRECTIVES.md</code></a> for the engineering law and the definition of done. Before a PR: `cargo fmt --all`, `cargo clippy --all-targets --all-features -- -D warnings`, and `cargo test --all-features` must be clean.
 
 <br>
 

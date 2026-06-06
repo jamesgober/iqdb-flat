@@ -1,12 +1,12 @@
 # iqdb-flat &mdash; API Reference
 
 > Complete reference for **every** public item in `iqdb-flat` as of
-> **v0.4.0**: what it is, its parameters and return shape, the traits it
+> **v0.5.0**: what it is, its parameters and return shape, the traits it
 > implements, and worked examples for each use case.
 >
-> **Status: pre-1.0.** The feature set is complete and frozen for the 0.x
-> series; the public API is finalised across 0.5.x and committed at 1.0. See
-> [`dev/ROADMAP.md`](../dev/ROADMAP.md).
+> **Status: pre-1.0, API frozen.** The public surface is committed as of v0.5.0
+> (recorded in [`dev/ROADMAP.md`](../dev/ROADMAP.md)); only additive,
+> non-breaking changes are made through the 1.x series.
 
 ## Table of Contents
 
@@ -71,10 +71,10 @@ flat never reimplements a metric.
 
 ```toml
 [dependencies]
-iqdb-flat = "0.4"
+iqdb-flat = "0.5"
 
 # Optional: rayon-backed parallel scan for large in-memory corpora.
-# iqdb-flat = { version = "0.4", features = ["parallel"] }
+# iqdb-flat = { version = "0.5", features = ["parallel"] }
 ```
 
 ---

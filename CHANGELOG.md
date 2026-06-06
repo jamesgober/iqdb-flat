@@ -18,6 +18,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.5.0] - 2026-06-06
+
+Large-scan correctness and the **public API freeze**. No new surface — this
+release pins the oracle guarantee at scale and commits the API for the 1.x
+series. Only additive, non-breaking changes are made from here to `1.0.0`.
+
+### Added
+
+- **Large-scan exact-correctness test** (`tests/large_scan.rs`) — asserts flat's
+  top-`k` is bit-for-bit identical to an independent naive full scan at
+  N = 20_000 (exact, via integer coordinates that avoid `f32` roundoff), and that
+  a full `k == N` scan returns every id exactly once in best-first order.
+
+### Changed
+
+- **Public API frozen.** The committed surface is recorded in `dev/ROADMAP.md`
+  (§ v0.5.0). `cargo audit` and `cargo deny check` are clean.
+
+---
+
 ## [0.4.0] - 2026-06-06
 
 The flat index is **feature-complete**. This release lands the implementation
@@ -80,6 +100,7 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 
-[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.1.0...v0.4.0
 [0.1.0]: https://github.com/jamesgober/iqdb-flat/releases/tag/v0.1.0
