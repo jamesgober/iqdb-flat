@@ -9,7 +9,7 @@
 #╚═══════════════════════════════╝
 [package]
 name    = "iqdb-flat"
-version = "0.1.0"
+version = "0.4.0"
 
 # Minimum Supported Rust Version (MSRV)
 rust-version = "1.87"
@@ -46,7 +46,8 @@ documentation = "https://docs.rs/iqdb-flat"
 
 # Authors
 authors = [
-    "James Gober <me@jamesgober.com>"
+    "James Gober <me@jamesgober.com>",
+    "Matt Callahan <matthewcallahan01@icloud.com>"
 ]
 
 [package.metadata.docs.rs]
@@ -61,33 +62,39 @@ path = "src/lib.rs"
 # FEATURE FLAGS
 # #################################
 [features]
-default = ["std"]
-# Standard library.
-std = []
-# Serialization support.
-serde = ["dep:serde"]
+default = []
+# Rayon-backed parallel distance scan. Off by default: the sequential
+# path is the correctness baseline and the parallel path is proven
+# byte-identical to it. Turn it on for large in-memory corpora.
+parallel = ["dep:rayon"]
 
 
 # DEPENDENCIES
 # #################################
 [dependencies]
-serde = { version = "1", optional = true, default-features = false, features = ["derive", "alloc"] }
+# Shared iQDB vocabulary: VectorId, Metadata, Hit, SearchParams, DistanceMetric, IqdbError.
+iqdb-types    = "1.0.0"
+# The five distance kernels (SIMD where the target allows it).
+iqdb-distance = "1.0.0"
+# The Index / IndexCore traits this crate implements.
+iqdb-index    = "1.0.0"
+# Metadata pre-filter evaluation (closed-world semantics, validated depth/IN caps).
+iqdb-filter   = "1.0.0"
+# Optional parallel scan; the sequential path never touches rayon.
+rayon         = { version = "1", optional = true }
 
 
 # DEV DEPENDENCIES
 # #################################
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
-proptest = "1"
-
-[target.'cfg(loom)'.dev-dependencies]
-loom = "0.7"
+proptest  = "1"
 
 
 # BENCHMARKS
 # #################################
 [[bench]]
-name    = "flat_bench"
+name    = "flat_search"
 harness = false
 
 

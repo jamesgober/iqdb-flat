@@ -18,6 +18,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.4.0] - 2026-06-06
+
+The flat index is **feature-complete**. This release lands the implementation
+on top of the v0.1.0 scaffold: exact search, the `Index` trait, the optional
+parallel scan, and metadata pre-filtering — wired to the stable (`1.0`) iQDB
+spine crates. The public API is finalised across the remaining 0.x series and
+frozen at `1.0.0`.
+
+### Added
+
+- **`FlatIndex`** — brute-force exact nearest-neighbour index implementing
+  `iqdb_index::IndexCore` and `iqdb_index::Index` (`type Config = FlatConfig`).
+  Insert, delete, batch insert, single and batch search, `flush`, and `stats`.
+- **`FlatConfig`** — unit configuration type satisfying the `Index::Config`
+  (`Default + Clone`) bound; a seam for future knobs without an API break.
+- **Exact top-`k` search** — a bounded max-heap selector (`O(n log k)`) keyed by
+  `(distance, insertion-sequence)` via `f32::total_cmp`: NaN-safe and
+  deterministic.
+- **One ordering invariant** — `Hit.distance` is *smaller-is-nearer* for all five
+  metrics; `DotProduct` is negated at the boundary.
+- **Stable tiebreaker** — equal-distance hits are ranked by insertion order,
+  preserved across `swap_remove` deletes and delete-then-reinsert sequences via
+  monotonic per-row sequence stamps.
+- **Amortized `O(1)` insert/delete** — a `HashMap` id→position map for duplicate
+  detection and `swap_remove` deletion, independent of corpus size.
+- **Zero-copy insert** — the caller's `Arc<[f32]>` payload is stored verbatim; no
+  fresh `[f32]` allocation, so a consumer can share one allocation with the index.
+- **Metadata pre-filtering** — `SearchParams::filter` is evaluated through
+  `iqdb-filter` before distance computation, so a selective filter skips work
+  proportionally.
+- **Optional `parallel` feature** — a rayon-backed chunked distance scan that is
+  byte-identical to the sequential baseline; small corpora short-circuit to
+  sequential.
+- **`VERSION`** — the crate's compile-time SemVer string.
+- **Tests** — unit, `proptest` invariants, an independent differential oracle for
+  all five metrics, parallel-vs-sequential equivalence, a no-filter allocation
+  invariant, tiebreaker/determinism suites, and a 50k-vector scale test.
+- **Benchmarks** — `criterion` search benches across representative `(n, dim)`
+  combinations under Cosine and Euclidean.
+- **`docs/API.md`** — complete reference for the public surface, with examples.
+
+### Changed
+
+- Wired dependencies to the stable iQDB spine: `iqdb-types`, `iqdb-distance`,
+  `iqdb-index`, and `iqdb-filter` (all `1.0`).
+- Added Matt Callahan to the crate authors.
+
+---
+
 ## [0.1.0] - 2026-05-30
 
 Initial scaffold and repository bootstrap. No domain logic yet &mdash; this release establishes the structure, tooling, and quality gates the implementation will be built on.
@@ -30,5 +79,7 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 - `REPS.md` compliance baseline.
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
-[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v0.1.0...HEAD
+
+[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.1.0...v0.4.0
 [0.1.0]: https://github.com/jamesgober/iqdb-flat/releases/tag/v0.1.0
