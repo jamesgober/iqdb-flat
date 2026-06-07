@@ -18,6 +18,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.0] - 2026-06-07
+
+**Stable.** The flat index is committed under the SemVer 1.x guarantee — no
+breaking changes until 2.0. There is no new API since v0.6.0; this release is the
+stability promise. What you build against today keeps compiling.
+
+### Changed
+
+- Promoted to `1.0.0`. The public surface frozen at v0.5.0 (recorded in
+  `dev/ROADMAP.md`) is now committed for the 1.x series; only additive,
+  non-breaking changes are made within 1.x. `iqdb_types::IqdbError` is
+  `#[non_exhaustive]`, so new error variants remain non-breaking.
+
+### Notes
+
+- Definition of Done (DIRECTIVES §7) satisfied: clean `fmt` / `clippy -D warnings`
+  / `test --all-features` / `doc -D warnings` on the CI matrix (Linux, macOS,
+  Windows) on stable and the 1.87 MSRV; `cargo audit` + `cargo deny` clean; zero
+  `unsafe`; every public item documented with a runnable example; correctness
+  pinned by property tests and an exact large-scan oracle; hot paths benchmarked.
+- `loom` is **not applicable** — flat has no lock-free or shared-mutable path
+  (single-writer-internal), so there is nothing for a concurrency model checker
+  to explore.
+
+---
+
 ## [0.6.0] - 2026-06-06
 
 Enters the pre-1.0 validation band (alpha). The crate is feature-complete and
@@ -118,7 +144,8 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 
-[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.6.0...v1.0.0
 [0.6.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.1.0...v0.4.0

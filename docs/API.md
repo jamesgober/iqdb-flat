@@ -1,17 +1,19 @@
 # iqdb-flat &mdash; API Reference
 
 > Complete reference for **every** public item in `iqdb-flat` as of
-> **v0.5.0**: what it is, its parameters and return shape, the traits it
+> **v1.0.0**: what it is, its parameters and return shape, the traits it
 > implements, and worked examples for each use case.
 >
-> **Status: pre-1.0, API frozen.** The public surface is committed as of v0.5.0
-> (recorded in [`dev/ROADMAP.md`](../dev/ROADMAP.md)); only additive,
-> non-breaking changes are made through the 1.x series.
+> **Status: stable (1.0).** The public surface is committed under SemVer for the
+> 1.x series — no breaking changes until 2.0 (the frozen surface is recorded in
+> [`dev/ROADMAP.md`](../dev/ROADMAP.md)); only additive, non-breaking changes are
+> made within 1.x.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Installation](#installation)
+- [Example pointers](#example-pointers)
 - [Quick start](#quick-start)
 - [Crate constants](#crate-constants)
   - [`VERSION`](#version)
@@ -71,11 +73,33 @@ flat never reimplements a metric.
 
 ```toml
 [dependencies]
-iqdb-flat = "0.5"
+iqdb-flat = "1.0"
 
 # Optional: rayon-backed parallel scan for large in-memory corpora.
-# iqdb-flat = { version = "0.5", features = ["parallel"] }
+# iqdb-flat = { version = "1.0", features = ["parallel"] }
 ```
+
+---
+
+## Example pointers
+
+Every example under [`examples/`](../examples) is runnable and asserts its own
+output (`cargo run --example <name>`):
+
+- **`quick_start`** — shortest end-to-end build / insert / search / `stats`.
+- **`metric_tour`** — one query under all five metrics; the smaller-is-nearer
+  contract and the `DotProduct` negation.
+- **`filtered_search`** — metadata pre-filtering with a compound `AND` / `>`
+  filter and the closed-world rule.
+- **`batch_and_stats`** — bulk loading via `insert_batch` (reserved capacity),
+  reading `stats`, and fail-fast batch semantics.
+- **`lifecycle`** — insert / delete / re-insert and the stable insertion-order
+  tiebreaker across deletes.
+- **`polymorphic`** — driving `FlatIndex` through `Box<dyn IndexCore>` (the
+  engine's view).
+- **`recall_oracle`** — measuring recall@k of a pruned stand-in against flat's
+  exact top-`k` — flat's reason for existing.
+- **`parallel_scan`** — the optional rayon scan (`--features parallel`).
 
 ---
 
@@ -325,7 +349,10 @@ fn insert_batch(&mut self, items: Vec<(VectorId, Arc<[f32]>, Option<Metadata>)>)
 
 Insert many vectors in one call. **Fail-fast:** the first error returns
 immediately and inserts that already succeeded remain in the index (it is not
-transactional). Provided by the trait default — flat does not override it.
+transactional). Flat **overrides** the trait default to `reserve` capacity in all
+backing stores up front, so a bulk load avoids the `O(log n)` incremental
+reallocations a naive per-item loop would trigger — same semantics, fewer
+allocations.
 
 ```rust
 use std::sync::Arc;
@@ -571,7 +598,7 @@ the distance scan is executed internally.
 
 | Trait | Source | Notes |
 |---|---|---|
-| [`IndexCore`] | `iqdb-index` | Full operational surface: `insert`, `insert_batch`*, `delete`, `search`, `search_batch`*, `len`, `is_empty`, `dim`, `metric`, `flush`, `stats`. (* trait default, not overridden.) |
+| [`IndexCore`] | `iqdb-index` | Full operational surface: `insert`, `insert_batch`†, `delete`, `search`, `search_batch`*, `len`, `is_empty`, `dim`, `metric`, `flush`, `stats`. (* = trait default; † = overridden to reserve capacity.) |
 | [`Index`] | `iqdb-index` | Typed construction; `type Config = FlatConfig`. |
 | `Debug` | derived | On `FlatIndex` and `FlatConfig`. |
 | `Default`, `Clone`, `PartialEq`, `Eq` | derived | On `FlatConfig`. |

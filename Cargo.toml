@@ -9,7 +9,7 @@
 #╚═══════════════════════════════╝
 [package]
 name    = "iqdb-flat"
-version = "0.6.0"
+version = "1.0.0"
 
 # Minimum Supported Rust Version (MSRV)
 rust-version = "1.87"
@@ -89,6 +89,14 @@ rayon         = { version = "1", optional = true }
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
 proptest  = "1"
+
+
+# EXAMPLES
+# #################################
+# The parallel example needs the optional feature; the rest build by default.
+[[example]]
+name              = "parallel_scan"
+required-features = ["parallel"]
 
 
 # BENCHMARKS

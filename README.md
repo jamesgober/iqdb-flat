@@ -29,7 +29,7 @@
         <strong>MSRV is 1.87+</strong> (Rust 2024 edition). Exact, correct, and the recall ground truth. Fast for small data.
     </p>
     <blockquote>
-        <strong>Status: pre-1.0, API frozen.</strong> The full index — exact search, top-<code>k</code>, the <code>Index</code> trait, optional parallel scans, and metadata pre-filtering — is implemented and tested, and the public API is committed as of <code>v0.5.0</code> (only additive, non-breaking changes through 1.x). See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
+        <strong>Status: stable (1.0).</strong> The full index — exact search, top-<code>k</code>, the <code>Index</code> trait, optional parallel scans, and metadata pre-filtering — is committed under the SemVer 1.x guarantee: no breaking changes until 2.0. See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
     </blockquote>
 </div>
 
@@ -50,10 +50,10 @@
 
 ```toml
 [dependencies]
-iqdb-flat = "0.6"
+iqdb-flat = "1.0"
 
 # Optional rayon-backed parallel scan for large in-memory corpora:
-# iqdb-flat = { version = "0.6", features = ["parallel"] }
+# iqdb-flat = { version = "1.0", features = ["parallel"] }
 ```
 
 <br>
@@ -119,16 +119,14 @@ The complete surface — every method, parameter, error, and more examples — i
 
 ## Status
 
-`v0.6.0` is **feature-complete with the public API frozen** (since 0.5.0): exact
-search, top-`k`, the full `Index` / `IndexCore` trait implementation, the
-optional `parallel` scan, and metadata pre-filtering all ship and are covered by
-unit, property, differential, and scale tests — including a bit-for-bit
-large-scan oracle check at N = 20,000 — plus a runnable
-<a href="./examples"><code>examples/</code></a> suite. The committed surface is
-recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>; only
-additive, non-breaking changes are made through 1.x. Remaining work to 1.0 is
-external validation against the real approximate indexes (HNSW, IVF) and final
-cross-crate benchmarks.
+`v1.0.0` is **stable**: exact search, top-`k`, the full `Index` / `IndexCore`
+trait implementation, the optional `parallel` scan, and metadata pre-filtering
+are all committed under the SemVer 1.x guarantee — no breaking changes until 2.0.
+The surface is covered by unit, property, differential, and scale tests —
+including a bit-for-bit large-scan oracle check at N = 20,000 — plus a runnable
+<a href="./examples"><code>examples/</code></a> suite, and is recorded in the
+<a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>. Only additive, non-breaking
+changes are made within 1.x.
 
 <hr>
 <br>

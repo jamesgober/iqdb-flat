@@ -115,11 +115,20 @@ path; single-writer-internal), so the DoD's loom criterion is satisfied vacuousl
 
 ---
 
-## v1.0.0 -- Stable
+## v1.0.0 -- Stable (DONE)
 
-- [ ] Definition of Done (DIRECTIVES section 7) satisfied.
-- [ ] Public API frozen until 2.0.
-- [ ] Release note written; published to crates.io; tag pushed.
+- [x] Definition of Done (DIRECTIVES section 7) satisfied.
+- [x] Public API frozen until 2.0 (the v0.5.0 surface, committed under SemVer 1.x).
+- [x] Release note written (`docs/release/v1.0.0.md`). Publish + tag handled by the maintainer.
+
+The 0.6-0.9 alpha/beta/RC band collapsed into 1.0: flat's surface is small,
+complete, and was frozen at 0.5.0, and every DoD criterion was already met by
+0.6.0 (clean CI matrix on stable + 1.87 MSRV; `audit`/`deny` clean; zero
+`unsafe`; property + exact large-scan oracle tests; benchmarked hot paths;
+runnable examples). `loom` is N/A (no lock-free path). Continued validation as
+the recall oracle against `iqdb-hnsw` / `iqdb-ivf` happens in those consumer
+crates and is additive — it does not change flat's frozen API, so it does not
+gate the 1.0 stability commitment.
 
 ---
 

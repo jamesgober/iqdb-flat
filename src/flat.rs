@@ -385,6 +385,27 @@ impl IndexCore for FlatIndex {
         Ok(())
     }
 
+    /// Reserves capacity for all backing stores up front, then inserts each
+    /// item via [`insert`](IndexCore::insert).
+    ///
+    /// This is the same fail-fast contract as the trait default (the first
+    /// error returns immediately; inserts before it remain), but a single
+    /// `reserve(items.len())` on each of the four `Vec`s and the
+    /// `HashMap` replaces the `O(log n)` incremental reallocations the
+    /// default loop would trigger — a measurable win for bulk loads.
+    fn insert_batch(&mut self, items: Vec<(VectorId, Arc<[f32]>, Option<Metadata>)>) -> Result<()> {
+        let additional = items.len();
+        self.vectors.reserve(additional);
+        self.ids.reserve(additional);
+        self.metadata.reserve(additional);
+        self.seqs.reserve(additional);
+        self.id_to_pos.reserve(additional);
+        for (id, vector, metadata) in items {
+            self.insert(id, vector, metadata)?;
+        }
+        Ok(())
+    }
+
     fn delete(&mut self, id: &VectorId) -> Result<()> {
         let pos = self.id_to_pos.remove(id).ok_or(IqdbError::NotFound)?;
         // swap_remove: O(1) per Vec; the row formerly at the back is moved
