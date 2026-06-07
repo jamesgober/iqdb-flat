@@ -50,10 +50,10 @@
 
 ```toml
 [dependencies]
-iqdb-flat = "0.5"
+iqdb-flat = "0.6"
 
 # Optional rayon-backed parallel scan for large in-memory corpora:
-# iqdb-flat = { version = "0.5", features = ["parallel"] }
+# iqdb-flat = { version = "0.6", features = ["parallel"] }
 ```
 
 <br>
@@ -119,14 +119,16 @@ The complete surface — every method, parameter, error, and more examples — i
 
 ## Status
 
-`v0.5.0` is **feature-complete with the public API frozen**: exact search,
-top-`k`, the full `Index` / `IndexCore` trait implementation, the optional
-`parallel` scan, and metadata pre-filtering all ship and are covered by unit,
-property, differential, and scale tests — including a bit-for-bit large-scan
-oracle check at N = 20,000. The committed surface is recorded in the
-<a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>; only additive, non-breaking
-changes are made through 1.x. Remaining work to 1.0 is integration against real
-consumers, polish, and final benchmarks.
+`v0.6.0` is **feature-complete with the public API frozen** (since 0.5.0): exact
+search, top-`k`, the full `Index` / `IndexCore` trait implementation, the
+optional `parallel` scan, and metadata pre-filtering all ship and are covered by
+unit, property, differential, and scale tests — including a bit-for-bit
+large-scan oracle check at N = 20,000 — plus a runnable
+<a href="./examples"><code>examples/</code></a> suite. The committed surface is
+recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>; only
+additive, non-breaking changes are made through 1.x. Remaining work to 1.0 is
+external validation against the real approximate indexes (HNSW, IVF) and final
+cross-crate benchmarks.
 
 <hr>
 <br>

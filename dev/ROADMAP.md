@@ -99,9 +99,19 @@ zero `unsafe`.
 
 ## v0.6.0 -> v0.9.x -- Alpha / Beta -> RC
 
+- **0.6.0 (DONE)** — runnable `examples/` suite shipped (`quick_start`,
+  `metric_tour`, `filtered_search`, `recall_oracle`); each asserts its output.
+  API-frozen, additive only. Enters the alpha band.
 - 0.6.x-0.7.x: integrate against real consumers; MINOR-compatible additions only.
 - 0.8.x (beta): bug fixes; broader testing; final benchmarks.
 - 0.9.x (rc): critical fixes + doc polish.
+
+**Blocked-work note.** The substantive 0.7-0.9 work — exercising flat as the
+recall oracle against `iqdb-hnsw` / `iqdb-ivf` and running cross-crate
+benchmarks — depends on those consumer crates and `iqdb-eval`, which live in
+separate repos. flat's own surface is complete and frozen; it does not change
+during this band. `loom` is **not applicable** (no lock-free / shared-mutable
+path; single-writer-internal), so the DoD's loom criterion is satisfied vacuously.
 
 ---
 

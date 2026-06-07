@@ -18,6 +18,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.6.0] - 2026-06-06
+
+Enters the pre-1.0 validation band (alpha). The crate is feature-complete and
+its public API is frozen (since 0.5.0); this release adds the runnable example
+suite. Additive only — no API change.
+
+### Added
+
+- `examples/quick_start.rs` — shortest end-to-end build / insert / search / stats.
+- `examples/metric_tour.rs` — the same query under all five metrics, showing the
+  one smaller-is-nearer ordering contract (including the `DotProduct` negation).
+- `examples/filtered_search.rs` — metadata pre-filtering with a compound
+  `AND`/`>` filter.
+- `examples/recall_oracle.rs` — flat as the recall oracle: measures recall@k of a
+  stand-in pruned index against flat's exact top-`k`.
+
+---
+
 ## [0.5.0] - 2026-06-06
 
 Large-scan correctness and the **public API freeze**. No new surface — this
@@ -100,7 +118,8 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 
-[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/jamesgober/iqdb-flat/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/jamesgober/iqdb-flat/compare/v0.1.0...v0.4.0
 [0.1.0]: https://github.com/jamesgober/iqdb-flat/releases/tag/v0.1.0
