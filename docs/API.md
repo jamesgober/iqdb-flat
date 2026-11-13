@@ -509,8 +509,9 @@ Two guarantees make flat's output deterministic and a usable oracle:
    the one inserted first is ranked higher. This holds across feature flags and
    across delete-then-reinsert sequences: each row carries a monotonic insertion
    stamp, and a re-inserted id gets a *fresh* (higher) stamp, so it moves to the
-   end of any tie. Selection uses `f32::total_cmp`, so `NaN` distances sort
-   last deterministically rather than panicking.
+   end of any tie. Selection uses `f32::total_cmp` with every `NaN` ranked
+   after every number, whatever its sign bit, so a `NaN` distance always
+   sorts last and never panics.
 
 ```rust
 use std::sync::Arc;
@@ -579,7 +580,7 @@ assert_eq!(hits[0].id, VectorId::U64(1)); // id 2 has no metadata → filtered o
 | `InvalidFilter` | `search` with a malformed filter (past `iqdb_filter`'s depth / `IN`-cardinality caps). |
 
 No method panics on any input, including non-finite (`NaN`/`±∞`) vector
-components — those flow through `f32::total_cmp` and sort deterministically.
+components. A `NaN` distance ranks last; the rest sort deterministically.
 
 ---
 

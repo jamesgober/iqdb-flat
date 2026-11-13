@@ -15,10 +15,12 @@
 //! without losing the insertion-order tiebreaker: position is no longer
 //! load-bearing, the stored `seq` carries the order.
 //!
-//! `f32` ordering goes through [`f32::total_cmp`] — `Ord` on raw `f32` is
+//! `f32` ordering goes through [`f32::total_cmp`] (`Ord` on raw `f32` is
 //! not provided by the standard library, and `partial_cmp` returns `None`
-//! on NaN. `total_cmp` defines a total order that handles every payload a
-//! distance computation might produce without panicking.
+//! on NaN), with one adjustment: every NaN ranks as the worst possible
+//! distance. `total_cmp` alone puts a NaN with its sign bit set (the
+//! default NaN that x86 arithmetic produces) below every number, which
+//! would make it the best match.
 
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
@@ -37,12 +39,21 @@ pub(crate) struct Scored {
 
 impl Scored {
     fn cmp_key(&self, other: &Self) -> Ordering {
-        // Primary: smaller distance is "smaller" (better).
+        // Primary: smaller distance is "smaller" (better), NaN last.
         // Secondary: smaller insertion sequence is "smaller" (better) — the
         // stable tiebreaker.
-        self.dist
-            .total_cmp(&other.dist)
-            .then(self.seq.cmp(&other.seq))
+        cmp_distance(self.dist, other.dist).then(self.seq.cmp(&other.seq))
+    }
+}
+
+/// Total order on distances with every NaN, whatever its sign bit, after
+/// every number including `+inf`.
+pub(crate) fn cmp_distance(a: f32, b: f32) -> Ordering {
+    match (a.is_nan(), b.is_nan()) {
+        (false, false) => a.total_cmp(&b),
+        (true, true) => Ordering::Equal,
+        (true, false) => Ordering::Greater,
+        (false, true) => Ordering::Less,
     }
 }
 
@@ -144,9 +155,24 @@ mod tests {
 
     #[test]
     fn select_topk_handles_nan_via_total_cmp() {
-        // NaN compares "greater than" every finite under total_cmp, so it
-        // sorts to the end. No panic, deterministic.
+        // NaN sorts to the end. No panic, deterministic.
         let out = select_topk_indices(&[f32::NAN, 1.0, 2.0], &seqs_in_order(3), 3);
         assert_eq!(out, vec![1, 2, 0]);
+    }
+
+    #[test]
+    fn negative_nan_ranks_last_not_first() {
+        // The default NaN x86 arithmetic produces has the sign bit set;
+        // total_cmp alone would order it below every number.
+        let neg_nan = f32::from_bits(0xffc0_0000);
+        assert!(neg_nan.is_nan() && neg_nan.is_sign_negative());
+        let out = select_topk_indices(
+            &[neg_nan, 1.0, f32::INFINITY, f32::NAN, 0.5],
+            &seqs_in_order(5),
+            5,
+        );
+        assert_eq!(out, vec![4, 1, 2, 0, 3]);
+        let top1 = select_topk_indices(&[neg_nan, 3.0], &seqs_in_order(2), 1);
+        assert_eq!(top1, vec![1]);
     }
 }
