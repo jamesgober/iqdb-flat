@@ -235,3 +235,25 @@ fn flat_index_is_object_safe_through_dyn_index_core() {
     assert_eq!(idx.len(), 1);
     idx.flush().unwrap();
 }
+
+#[test]
+fn overflowing_cosine_candidate_does_not_outrank_an_exact_match() {
+    // `[1e20, -1e20]` is orthogonal to the query, but its products overflow
+    // f32. Whatever distance comes back, it must not rank above the exact
+    // direction match.
+    let mut idx = new_empty(2, DistanceMetric::Cosine);
+    idx.insert(VectorId::from(1u64), arc(&[1.0, 1.0]), None)
+        .unwrap();
+    idx.insert(
+        VectorId::from(2u64),
+        arc(&[std::hint::black_box(1e20), std::hint::black_box(-1e20)]),
+        None,
+    )
+    .unwrap();
+    let q = [std::hint::black_box(1e20_f32), std::hint::black_box(1e20)];
+    let hits = idx
+        .search(&q, &SearchParams::new(2, DistanceMetric::Cosine))
+        .unwrap();
+    assert_eq!(hits.len(), 2);
+    assert_eq!(hits[0].id, VectorId::from(1u64), "{hits:?}");
+}

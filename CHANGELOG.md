@@ -8,13 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Added
-
-### Changed
+Planned as 1.0.1. No API changes.
 
 ### Fixed
 
-### Security
+- A NaN distance with its sign bit set ranked as the best match. Top-`k`
+  ordered by `f32::total_cmp`, which puts that NaN (the default NaN x86
+  arithmetic produces) below every number, so a vector whose cosine
+  overflowed could outrank an exact match. Every NaN now ranks after every
+  number, whatever its sign bit.
 
 ---
 

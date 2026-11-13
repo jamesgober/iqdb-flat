@@ -110,7 +110,7 @@ The complete surface — every method, parameter, error, and more examples — i
 ## Performance
 
 - **Distance** is delegated to [`iqdb-distance`](https://crates.io/crates/iqdb-distance), which dispatches to SIMD kernels (AVX2/NEON) where the target allows; flat never reimplements a metric.
-- **Top-`k`** uses a bounded max-heap of size `k` keyed by `(distance, sequence)` — `O(n log k)`, NaN-safe via `f32::total_cmp`.
+- **Top-`k`** uses a bounded max-heap of size `k` keyed by `(distance, sequence)` — `O(n log k)`, with any `NaN` distance ranked last.
 - **Insert / delete** are amortized `O(1)`: a `HashMap` id→position map for duplicate checks, `swap_remove` for deletion, and a monotonic sequence stamp so reordering never disturbs the tiebreaker.
 - **No-filter search** allocates a fixed number of buffers independent of corpus size (locked in by `tests/no_alloc.rs`).
 - **`parallel` feature** adds a rayon chunked scan that is **byte-identical** to the sequential baseline (`tests/parallel_equivalence.rs`); small corpora short-circuit to sequential.
@@ -119,7 +119,7 @@ The complete surface — every method, parameter, error, and more examples — i
 
 ## Status
 
-`v1.0.0` is **stable**: exact search, top-`k`, the full `Index` / `IndexCore`
+`v1.0.1` is **stable**: exact search, top-`k`, the full `Index` / `IndexCore`
 trait implementation, the optional `parallel` scan, and metadata pre-filtering
 are all committed under the SemVer 1.x guarantee — no breaking changes until 2.0.
 The surface is covered by unit, property, differential, and scale tests —

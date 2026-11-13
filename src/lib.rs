@@ -30,7 +30,7 @@
 //!   more similar) is negated at the boundary so [`Hit::distance`] is always
 //!   *smaller-is-nearer*, the same contract across all five metrics.
 //! - **Bounded top-`k`.** Selection uses a max-heap of size `k` keyed by
-//!   `(distance, seq)` via [`f32::total_cmp`], so it is `O(n log k)`,
+//!   `(distance, seq)` via [`f32::total_cmp`] with NaN ranked last, so it is `O(n log k)`,
 //!   NaN-safe, and deterministic: ties break on insertion order (lower
 //!   sequence number wins).
 //! - **Filter-first.** A metadata filter is evaluated *before* distance
